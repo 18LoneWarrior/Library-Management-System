@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+</head>
+<body>
+    <div class="header-nav">
+  <div>
+    <h1>Hello {{request.user|title}}</h1>
+    <h2 style="margin: 0">You have <i>{{count}}</i> books to be read</h2>
+  </div>
+  {% if request.user.is_authenticated %}
+
+  <a href="{%url 'logout'  %}">Logout</a>
+  {% else %}
+  <a href="{%url 'login'  %}">Login</a>
+  {% endif %}
+</div>
+
+<div class="book-list-box">
+  {% for book in books %}
+  <div class="book-box">
+    {% if book.finish %}
+    <div class="book-title">
+      <div class="book-finished-icon"></div>
+      <i>
+        <s><a href="{%url 'update_book' book.id %}">{{book}}</a></s>
+      </i>
+    </div>
+    <a class="delete-link" href="{%url 'delete_book' book.id %}"></a>
+    {% else %}
+    <div class="book-title">
+      <div class="book-unfinished-icon"></div>
+      <a href="{%url 'update_book' book.id %}">{{book}}</a>
+    </div>
+    <a class="delete-link" href="{%url 'delete_book' book.id %}"></a>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% comment %} conditional rendering for admin if request.user==toffadminpanel
+insert {% endcomment %}
+<hr />
+<div class="available-books">
+  <table>
+    <tr>
+      <th>Books Available</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for book in books %}
+    <tr>
+      {% if request.user.username == "toff" %}
+
+      <td>{{book.title}}</td>
+      <td><a href="{%url 'book' book.id %}">View</a></td>
+      <td><a href="{%url 'update_book' book.id %}">Edit</a></td>
+      <td><a href="{%url 'delete_book' book.id %}">Delete</a></td>
+      <td><a href="{%url 'create_book'  %}">Add Book</a></td>
+
+      {% else %}
+      <td>{{book.title}}</td>
+      <td><a href="{%url 'book' book.id %}"></a></td>
+      <td><a href="{%url 'update_book' book.id %}"></a></td>
+      <td><a href="{%url 'delete_book' book.id %}"></a></td>
+      {% endif %}
+    </tr>
+    {% empty %}
+    <h3>No books in the List</h3>
+    {% endfor %}
+  </table>
+</div>
+</body>
+</html>
